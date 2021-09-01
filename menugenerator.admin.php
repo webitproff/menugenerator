@@ -75,7 +75,6 @@ if (count($item_id))
 			}
 		}
 	}
-	$cache && $cache->db->remove('mg_menus', 'system');
 
 }
 //ЧИТАЕМ ТАБЛИЦУ
@@ -104,6 +103,7 @@ function cot_build_table($parent = '', $level = 0)
 	global $tt, $mg_menuarray, $cot_extrafields, $db_menugenerator;
 
 	$level++;
+	$level_case = '';
 	for ($j = 1; $j < $level; $j++)
 	{
 		$level_case .= '&nbsp; &nbsp; &nbsp; ';
@@ -114,12 +114,12 @@ function cot_build_table($parent = '', $level = 0)
 		$qid = $row['mg_id'];
 
 		$tt->assign(array(
-			'MENU_ITEM_TITLE' => cot_inputbox('hidden', 'item_id['.$qid.']', $row['mg_id'], 'class="item_id"').cot_inputbox('text', 'item_title['.$qid.']', $row['mg_title'], 'class="item_title"'),
-			'MENU_ITEM_HREF' => cot_inputbox('text', 'item_href['.$qid.']', $row['mg_href'], 'size="32" class="item_href"'),
-			'MENU_ITEM_EXTRA' => cot_inputbox('text', 'item_extra['.$qid.']', $row['mg_extra'], 'size="16" class="item_extra"'),
-			'MENU_ITEM_DESC' => cot_inputbox('text', 'item_desc['.$qid.']', $row['mg_desc'], 'size="18" class="item_desc"'),
-			'MENU_ITEM_PATH' => cot_inputbox('text', 'item_path['.$qid.']', $row['mg_path'], 'size="8" class="item_path"'),
-			'MENU_ITEM_USERS' => cot_inputbox('text', 'item_users['.$qid.']', $row['mg_users'], 'size="12" class="item_users"'),
+			'MENU_ITEM_TITLE' => cot_inputbox('hidden', 'item_id['.$qid.']', $row['mg_id']).cot_inputbox('text', 'item_title['.$qid.']', $row['mg_title']),
+			'MENU_ITEM_HREF' => cot_inputbox('text', 'item_href['.$qid.']', $row['mg_href'], 'size="32"'),
+			'MENU_ITEM_EXTRA' => cot_inputbox('text', 'item_extra['.$qid.']', $row['mg_extra'], 'size="16"'),
+			'MENU_ITEM_DESC' => cot_inputbox('text', 'item_desc['.$qid.']', $row['mg_desc'], 'size="18"'),
+			'MENU_ITEM_PATH' => cot_inputbox('text', 'item_path['.$qid.']', $row['mg_path'], 'size="8"'),
+			'MENU_ITEM_USERS' => cot_inputbox('text', 'item_users['.$qid.']', $row['mg_users'], 'size="12"'),
 			'MENU_ITEM_ID' => $qid,
 			'MENU_ITEM_LEVELC' => $level_case,
 			'MENU_ITEM_LEVEL' => $level,
@@ -143,12 +143,12 @@ function cot_build_table($parent = '', $level = 0)
 }
 
 $tt->assign(array(
-	'MENU_ITEM_TITLE' => cot_inputbox('hidden', 'item_id[]', 'new' , 'class="item_id"').cot_inputbox('text', 'item_title[]', '', 'class="item_title"'),
-	'MENU_ITEM_HREF' =>  cot_inputbox('text', 'item_href[]', '#', 'size="32" class="item_href"'),
-	'MENU_ITEM_EXTRA' => cot_inputbox('text', 'item_extra[]', '', 'size="16" class="item_extra"'),
-	'MENU_ITEM_DESC' => cot_inputbox('text', 'item_desc[]', '', 'size="18" class="item_desc"'),
-	'MENU_ITEM_PATH' => cot_inputbox('text', 'item_path[]', '', 'size="8" class="item_path"'),
-	'MENU_ITEM_USERS' => cot_inputbox('text', 'item_users[]', '', 'size="12" class="item_users"'),
+	'MENU_ITEM_TITLE' => cot_inputbox('hidden', 'item_id[]', 'new').cot_inputbox('text', 'item_title[]', ''),
+	'MENU_ITEM_HREF' =>  cot_inputbox('text', 'item_href[]', '#', 'size="32"'),
+	'MENU_ITEM_EXTRA' => cot_inputbox('text', 'item_extra[]', '', 'size="16"'),
+	'MENU_ITEM_DESC' => cot_inputbox('text', 'item_desc[]', '', 'size="18"'),
+	'MENU_ITEM_PATH' => cot_inputbox('text', 'item_path[]', '', 'size="8"'),
+	'MENU_ITEM_USERS' => cot_inputbox('text', 'item_users[]', '', 'size="12"'),
 	'MENU_ITEM_ID' => 'new',
 	'MENU_ITEM_LEVELC' => '',
 	'MENU_ITEM_LEVEL' => 0,
@@ -176,4 +176,4 @@ $tt->parse('MAIN.GENERAL');
 $tt->parse('MAIN.HELP');
 
 $tt->parse('MAIN');
-$plugin_body =$tt->text('MAIN');
+$plugin_body = $tt->text('MAIN');

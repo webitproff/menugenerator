@@ -1,7 +1,7 @@
 <!-- BEGIN: MAIN -->
-		<div class=" button-toolbar block">
-				<a href="{PHP.db_menugenerator|cot_url('admin', 'm=extrafields&n=$this')}" class="button icon database">{PHP.L.adm_extrafields_desc}</a>
-		</div>
+<div class=" button-toolbar block">
+        <a href="{PHP.db_menugenerator|cot_url('admin', 'm=extrafields&n=$this')}" class="button">{PHP.L.adm_extrafields_desc}</a>
+</div>
 <script type="text/javascript">
     var qid={PHP.local_max};
     function removemenugenerator(object)
@@ -25,13 +25,13 @@
             $(object).find('.item_desc').attr('name', 'item_desc['+qid+']');
             $(object).find('.item_path').attr('name', 'item_path['+qid+']');
             $(object).find('.item_users').attr('name', 'item_users['+qid+']');
-			$(object).find('.item_extra').attr('name', 'item_extra['+qid+']');
+
             $(object).insertBefore('#mg_new').show();
             qid++;
         });
         $("#menugeneratorbefore").show();
-        if(ident < 2)
-        {$("#addoption").click();}
+//        if(ident < 2)
+//        {$("#addoption").click();}
 
     });
 </script>

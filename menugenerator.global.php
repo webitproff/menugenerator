@@ -1,17 +1,16 @@
 <?php
-
 /*
  * [BEGIN_COT_EXT]
  * Hooks=global
+ * Order=20
  * [END_COT_EXT]
  */
 
 /**
  * Menu Generator for Cotonti CMF
  *
- * @version 2.1
- * @author esclkm, http://www.littledev.ru
- * @copyright (c) 2008-2011 esclkm, http://www.littledev.ru
+ * @author esclkm, http://www.littledev.ru, Kalnov Alexey <kalnovalexey@yandex.ru>
+ * @copyright (c) 2008-2011 esclkm http://www.littledev.ru, 2011-2021 Lily Software https://lily-software.com (ex. Portal30 Studio)
  */
 defined('COT_CODE') or die('Wrong URL.');
 
@@ -43,6 +42,7 @@ function cot_build_menugenerator($parent = '', $usergr = 4, $level = 0, $menutre
 
 	foreach ($mg_menuarray[$parent] as $key => $row)
 	{
+        $jj = 0;
 		if (empty($row['mg_users']) || !in_array($usergr, explode(', ', $row['mg_users'])))
 		{
 			$jj++;
@@ -51,32 +51,37 @@ function cot_build_menugenerator($parent = '', $usergr = 4, $level = 0, $menutre
 			{
 				$submenugenerator = cot_build_menugenerator($row['mg_path'], $usergr, $level, $menutree);
 			}
-			$xhref = explode(".php?", $row['mg_href'], 2);
-			if(count($xhref) == 2 && preg_match("/([a-zA-Z]{1,30})/", $xhref[0]))
-			{
-				if($xhref[0] == 'index' && !empty($xhref[1]))
-				{
-					preg_match("/e\=([a-z]{1,65})\&?(.+)?/", $xhref[1], $matches);
-					$ext = $matches[1];
-					$params = $matches[2]; 
-					if (cot_module_active($ext))
-					{
-						$row['mg_href'] = cot_url($ext, $params);
-					}
-					else
-					{
-						$row['mg_href'] = cot_url($xhref[0], $xhref[1]);	
-					}
-				}
-				else
-				{
-					$row['mg_href'] = cot_url($xhref[0], $xhref[1]);
-				}
-			}
-			
+            // parse_url
+            $tmp = parse_url($row['mg_href']);
+            if (empty($tmp['host']) && empty($tmp['scheme']) && !empty($tmp['path']) && mb_strpos($tmp['path'], '.php') !== false) {
+                $query = array();
+                $anchor = !empty($tmp['fragment']) ? $tmp['fragment'] : '';
+                if (!empty($tmp['query'])) parse_str($tmp['query'], $query);
+                if ($tmp['path'] == "index.php"){
+                    if (isset($query['e'])){
+                        $name = $query['e'];
+                        unset($query['e']);
+                        $row['mg_href'] = cot_url($name, $query, $anchor);
+                    }else{
+                        $row['mg_href'] = cot_url('index', $query, $anchor);
+                    }
+
+                }elseif(preg_match("/^[\/]?([A-Za-z]{1,30}).php/i", $tmp['path'], $matches)){
+                    $name = $matches[1];
+                    $row['mg_href'] = cot_url($name, $query, $anchor);
+                }
+
+            }
+//			$xhref = explode(".php?", $row['mg_href'], 2);
+//			if(count($xhref) == 2 && preg_match("([a-zA-Z]{1,30})", $xhref[0]))
+//			{
+//				$row['mg_href'] = cot_url($xhref[0], $xhref[1]);
+//			}
+//			var_dump($row);
 			$menugeneratort->assign(array(
 				'MENU_TITLE' => htmlspecialchars($row['mg_title']),
 				'MENU_HREF' => $row['mg_href'],
+                'MENU_PATH' => $row['mg_path'],
 				'MENU_EXTRA' => htmlspecialchars($row['mg_extra']),
 				'MENU_DESC' => htmlspecialchars($row['mg_desc']),
 				'MENU_ID' => htmlspecialchars($row['mg_id']),
@@ -131,4 +136,3 @@ if (!isset($mg_menus[$usr['maingrp']]))
 	$cache && $cache->db->store('mg_menus', $mg_menus, 'system', 7200);
 }
 $MENUGENERATOR = $mg_menus[$usr['maingrp']];
-?>
