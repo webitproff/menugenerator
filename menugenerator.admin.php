@@ -1,22 +1,19 @@
 <?php
 /* ====================
 [BEGIN_COT_EXT]
-Code=menugenerator
 Hooks=tools
-Tags=
-Order=10
 [END_COT_EXT]
 ==================== */
 
 /**
  * Menu Generator for Cotonti CMF
  *
- * @version 2.1
- * @author esclkm, http://www.littledev.ru
- * @copyright (c) 2008-2011 esclkm, http://www.littledev.ru
+ * @author esclkm, http://www.littledev.ru, Kalnov Alexey <kalnovalexey@yandex.ru>
+ * @copyright (c) esclkm http://www.littledev.ru, 2011-2021 Lily Software https://lily-software.com (ex. Portal30 Studio)
  */
 
 defined('COT_CODE') or die('Wrong URL.');
+
 require_once(cot_langfile('menugenerator'));
 require_once cot_incfile('forms');
 
@@ -28,50 +25,39 @@ $item_path = cot_import('item_path', 'P', 'ARR');
 $item_users = cot_import('item_users', 'P', 'ARR');
 $item_desc = cot_import('item_desc', 'P', 'ARR');
 
-foreach ($cot_extrafields[$db_menugenerator] as $rowex)
-{
-	if ($rowex['field_type'] != 'file' || $rowex['field_type'] != 'filesize')
-	{
-		$item_extrafieldsarr[$row['field_name']] = cot_import('item_'.$rowex['field_name'], 'P', 'ARR');
-	}
-	elseif($rowex['field_type'] == 'file')
-	{
+foreach (cot::$extrafields[$db_menugenerator] as $rowex) {
+	if ($rowex['field_type'] != 'file' || $rowex['field_type'] != 'filesize') {
+		$item_extrafieldsarr[$rowex['field_name']] = cot_import('item_'.$rowex['field_name'], 'P', 'ARR');
+
+	} elseif($rowex['field_type'] == 'file') {
 		// TODO FIXME!
 		//$item_extrafieldsarr[$rowex['field_name']] = cot_import_filesarray('rstructure'.$rowex['field_name']);
 	}
 }
 
-if (count($item_id))
-{
-
-	foreach ($item_id as $key => $val)
-	{
+if (count($item_id)) {
+	foreach ($item_id as $key => $val) {
 		$menu['mg_title'] = cot_import($item_title[$key], 'D', 'TXT');
 		$menu['mg_path'] = cot_import($item_path[$key], 'D', 'TXT');
 		$menu['mg_href'] = cot_import($item_href[$key], 'D', 'TXT');
 		$menu['mg_extra'] = cot_import($item_extra[$key], 'D', 'TXT');
 		$menu['mg_users'] = cot_import($item_users[$key], 'D', 'TXT');
 		$menu['mg_desc'] = cot_import($item_desc[$key], 'D', 'TXT');
-			
-		foreach ($cot_extrafields[$db_menugenerator] as $rowex)
-		{
-				$menu['mg_'.$rowex['field_name']] = cot_import_extrafields($item_extrafieldsarr[$rowex['field_name']][$i], $rowex, 'D', '');
+
+		foreach (cot::$extrafields[$db_menugenerator] as $i => $rowex) {
+		    $menu['mg_'.$rowex['field_name']] = cot_import_extrafields($item_extrafieldsarr[$rowex['field_name']][$i],
+                                                                           $rowex, 'D', '');
 		}
 
+		if ($val == 'new' && !empty($item_title[$key])) {
+			cot::$db->insert($db_menugenerator, $menu);
 
-		if ($val == 'new' && !empty($item_title[$key]))
-		{
-			$db->insert($db_menugenerator, $menu);
-		}
-		else
-		{
-			if(!empty($item_title[$key]))
-			{
-				$db->update($db_menugenerator, $menu, "mg_id='".(int)$val."'");
-			}
-			else
-			{
-				$db->delete($db_menugenerator, "mg_id='".(int)$val."'");
+        } else {
+			if(!empty($item_title[$key])) {
+				cot::$db->update($db_menugenerator, $menu, "mg_id='".(int)$val."'");
+
+            } else {
+				cot::$db->delete($db_menugenerator, "mg_id='".(int)$val."'");
 			}
 		}
 	}
@@ -89,12 +75,11 @@ cot_read_sqltable();
 //создаем меню.
 // запускаем генератор
 // Читаем всписки менюшек.
-$cache && $cache->db->remove('mg_menus', 'system');
+cot::$cache && cot::$cache->db->remove('mg_menus', 'system');
 
 $sskin = cot_tplfile('menugenerator.admin', 'plug');
 $tt = new XTemplate($sskin);
-if (count($mg_menuarray))
-{
+if (count($mg_menuarray)) {
 	cot_build_table('');
 }
 
@@ -104,13 +89,11 @@ function cot_build_table($parent = '', $level = 0)
 
 	$level++;
 	$level_case = '';
-	for ($j = 1; $j < $level; $j++)
-	{
+	for ($j = 1; $j < $level; $j++) {
 		$level_case .= '&nbsp; &nbsp; &nbsp; ';
 	}
 	$parent = ($parent == '') ? 'GENERAL' : $parent;
-	foreach ($mg_menuarray[$parent] as $key => $row)
-	{
+	foreach ($mg_menuarray[$parent] as $key => $row) {
 		$qid = $row['mg_id'];
 
 		$tt->assign(array(
@@ -126,17 +109,15 @@ function cot_build_table($parent = '', $level = 0)
 		));
 		
 		// Extra fields
-		foreach($cot_extrafields[$db_menugenerator] as $i => $rowex)
-		{
+		foreach(cot::$extrafields[$db_menugenerator] as $i => $rowex) {
 			$uname = strtoupper($rowex['field_name']);
 			$t->assign('MENU_ITEM_'.$uname, cot_build_extrafields('item_'.$rowex['field_name'].'['.$qid.']', $rowex, $row[$rowex['field_name']]));
-			$t->assign('MENU_ITEM_'.$uname.'_TITLE', isset($L['menugenerator_'.$rowex['field_name'].'_title']) ?  $L['menugenerator_'.$rowex['field_name'].'_title'] : $rowex['field_description']);
+			$t->assign('MENU_ITEM_'.$uname.'_TITLE', isset(cot::$L['menugenerator_'.$rowex['field_name'].'_title']) ?  cot::$L['menugenerator_'.$rowex['field_name'].'_title'] : $rowex['field_description']);
 		}
 		
 		$tt->parse('MAIN.GENERAL.ITEMS');
 
-		if (isset($mg_menuarray[$row['mg_path']]))
-		{
+		if (isset($mg_menuarray[$row['mg_path']])) {
 			cot_build_table($row['mg_path'], $level);
 		}
 	}
@@ -153,21 +134,19 @@ $tt->assign(array(
 	'MENU_ITEM_LEVELC' => '',
 	'MENU_ITEM_LEVEL' => 0,
 ));
-		// Extra fields
-foreach($cot_extrafields[$db_menugenerator] as $i => $rowex)
-{
+// Extra fields
+foreach(cot::$extrafields[$db_menugenerator] as $i => $rowex) {
 	$uname = strtoupper($rowex['field_name']);
 	$t->assign('MENU_ITEM_'.$uname, cot_build_extrafields('item_'.$rowex['field_name'].'[]', $rowex, ''));
-	$t->assign('MENU_ITEM_'.$uname.'_TITLE', isset($L['menugenerator_'.$rowex['field_name'].'_title']) ?  $L['menugenerator_'.$rowex['field_name'].'_title'] : $rowex['field_description']);
+	$t->assign('MENU_ITEM_'.$uname.'_TITLE', isset(cot::$L['menugenerator_'.$rowex['field_name'].'_title']) ?  cot::$L['menugenerator_'.$rowex['field_name'].'_title'] : $rowex['field_description']);
 }
 		
 $tt->parse('MAIN.GENERAL.ITEMS');
 $tt->assign('MENU_FORMACTION', cot_url('admin', 'm=other&p=menugenerator'));
-if (count($mg_set))
-{
-	foreach ($mg_set as $key => $val)
-	{
-		if ($textmenugenerator) $textmenugenerator.=", ";
+$textmenugenerator = '';
+if (count($mg_set)){
+	foreach ($mg_set as $key => $val) {
+		if ($textmenugenerator != '') $textmenugenerator.=", ";
 		$textmenugenerator .= '{PHP.MENUGENERATOR.'.mb_strtoupper($val).'}';
 	}
 }
