@@ -135,4 +135,4 @@ if (!isset($mg_menus[$usr['maingrp']]))
 	}
 	$cache && $cache->db->store('mg_menus', $mg_menus, 'system', 7200);
 }
-$MENUGENERATOR = $mg_menus[$usr['maingrp']];
+$MENUGENERATOR = isset($mg_menus[$usr['maingrp']]) ? $mg_menus[$usr['maingrp']] : null;
