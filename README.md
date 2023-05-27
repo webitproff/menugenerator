@@ -55,7 +55,7 @@ Single menu item can be designed in template: `menugenerator.le.level2.le.1.30.t
 
 You can use additional fields to display additional information: description, icons, etc. Extrafields are also supported.
 
-#Tags in menu templates
+## Tags in menu templates
 
 `{MENU_TITLE}` - menu item title
 `{MENU_HREF}` - link
