@@ -5,7 +5,6 @@ defined('COT_CODE') or die('Wrong URL.');
 /**
  * Menu Generator for Cotonti CMF
  *
- * @version 2.1
  * @author esclkm, http://www.littledev.ru
  * @copyright (c) 2008-2011 esclkm, http://www.littledev.ru
  */
