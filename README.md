@@ -10,11 +10,9 @@ Plugin page:
 https://www.cotonti.com/extensions/administration-management/menu-generator
 
 ## Installation
-
 - Unpack to your plugins folder
 - Install the plugin in AdminCP
 - Fill out the menu using the tools section
 - Place tags in the templates
 
-
-
+Menu edit example:
