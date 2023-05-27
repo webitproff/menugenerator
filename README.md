@@ -11,8 +11,9 @@ https://www.cotonti.com/extensions/administration-management/menu-generator
 
 ## Installation
 - Unpack to your plugins folder
-- Install the plugin in AdminCP
-- Fill out the menu using the tools section
+- Install the plugin in Administration panel
+- Fill out the menu using the tools section: Administration panel → Extensions → Menu Generator → Administration
 - Place tags in the templates
 
 Menu edit example:
+![menu-generator](https://github.com/Cotonti-Extensions/menugenerator/assets/1021886/b4efed59-57d1-485c-ae0e-b41938147c14)
