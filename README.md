@@ -57,10 +57,10 @@ You can use additional fields to display additional information: description, ic
 
 ## Tags in menu templates
 
-`{MENU_TITLE}` - menu item title
-`{MENU_HREF}` - link
-`{MENU_PATH}` - path (see menu filling)
-`{MENU_EXTRA}` - additional text field
-`{MENU_DESC}` - description
-`{MENU_ID}` - ID
+`{MENU_TITLE}` - menu item title  
+`{MENU_HREF}` - link  
+`{MENU_PATH}` - path (see menu filling)  
+`{MENU_EXTRA}` - additional text field  
+`{MENU_DESC}` - description  
+`{MENU_ID}` - ID  
 `{MENU_SUBMENU}` - submenu.
