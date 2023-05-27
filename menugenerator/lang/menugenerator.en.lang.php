@@ -21,8 +21,4 @@ $L['mg_users']='Not available for grp id';
 $L['mg_main']='Main menu';
 $L['mg_create']='Generate category-bacot menu (page category ID, comma separated):';
 $L['Update_menu']='Generate menuge';
-$L['mg_example']='Example:<pre>	&lt;div class="menu"&gt;
-		{PHP.MENUGENERATOR.GENERAL}
-	&lt;/div&gt;</pre>'
-
-?>
+$L['mg_example']='Example:<pre>	&lt;div class="menu"&gt;{PHP.MENUGENERATOR.GENERAL}&lt;/div&gt;</pre>';
